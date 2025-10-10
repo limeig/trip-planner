@@ -2,5 +2,5 @@ package models
 
 type User struct {
 	Name  string
-	Trips []*Trip
+	Trips []Trip
 }

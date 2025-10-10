@@ -45,7 +45,8 @@ func (r *Memory) AddTrip(userName string, tripName string, locationNames []strin
 		trip.Locations = append(trip.Locations, location)
 	}
 
-	user.Trips = append(user.Trips, &trip)
+	user.Trips = append(user.Trips, trip)
+
 	return nil
 }
 
