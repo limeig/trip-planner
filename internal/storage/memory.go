@@ -26,17 +26,16 @@ func (r *Repository) AddUser(name string) {
 }
 
 func (r *Repository) AddTrip(userName string, tripName string, locationNames []string) {
-	if r.Users[userName] == nil {
+	user, ok := r.Users[userName]
+	if !ok {
 		fmt.Printf("User %s was not found in memory\n", userName)
 		return
 	}
 
-	user := r.Users[userName]
 	var trip models.Trip
-
 	for _, locationName := range locationNames {
-		location := r.Locations[locationName]
-		if location == nil {
+		location, ok := r.Locations[locationName]
+		if !ok {
 			fmt.Printf("Location %s for the trip %s was not found in memory\n", locationName, tripName)
 			continue
 		}
@@ -48,11 +47,9 @@ func (r *Repository) AddTrip(userName string, tripName string, locationNames []s
 }
 
 func (r *Repository) GetUser(userName string) (*models.User, error) {
-	user := r.Users[userName]
-
-	if user == nil {
-		return nil, models.ErrUserNotFound
+	if user, ok := r.Users[userName]; ok {
+		return user, nil
 	}
 
-	return user, nil
+	return nil, models.ErrUserNotFound
 }
