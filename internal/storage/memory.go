@@ -5,31 +5,33 @@ import (
 	"trip-planner/internal/models"
 )
 
-type Repository struct {
+type Memory struct {
 	Locations map[string]*models.Location
 	Users     map[string]*models.User
 }
 
-func New() Repository {
-	return Repository{Locations: map[string]*models.Location{},
+func New() Memory {
+	return Memory{Locations: map[string]*models.Location{},
 		Users: map[string]*models.User{},
 	}
 }
 
-func (r *Repository) AddLocation(name string, country string) {
+func (r *Memory) AddLocation(name string, country string) error {
 	r.Locations[name] = &models.Location{Name: name, Country: country}
+	return nil
 }
 
-func (r *Repository) AddUser(name string) {
-	trips := make([]*models.Trip, 0)
+func (r *Memory) AddUser(name string) error {
+	trips := make([]models.Trip, 0)
 	r.Users[name] = &models.User{Name: name, Trips: trips}
+	return nil
 }
 
-func (r *Repository) AddTrip(userName string, tripName string, locationNames []string) {
+func (r *Memory) AddTrip(userName string, tripName string, locationNames []string) error {
 	user, ok := r.Users[userName]
 	if !ok {
 		fmt.Printf("User %s was not found in memory\n", userName)
-		return
+		return models.ErrUserNotFound
 	}
 
 	var trip models.Trip
@@ -44,9 +46,10 @@ func (r *Repository) AddTrip(userName string, tripName string, locationNames []s
 	}
 
 	user.Trips = append(user.Trips, &trip)
+	return nil
 }
 
-func (r *Repository) GetUser(userName string) (*models.User, error) {
+func (r *Memory) GetUser(userName string) (*models.User, error) {
 	if user, ok := r.Users[userName]; ok {
 		return user, nil
 	}
