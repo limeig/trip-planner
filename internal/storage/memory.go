@@ -1,8 +1,10 @@
 package storage
 
 import (
-	"fmt"
+	"trip-planner/internal/logger"
 	"trip-planner/internal/models"
+
+	"go.uber.org/zap"
 )
 
 type Memory struct {
@@ -18,7 +20,8 @@ func New() *Memory {
 func (r *Memory) AddLocation(userName string, name string, country string) error {
 	user, ok := r.Users[userName]
 	if !ok {
-		fmt.Printf("User %s was not found in memory\n", userName)
+		logger.Log.Debug("User not in memory\n",
+			zap.String("name", userName))
 		return ErrUserNotFound
 	}
 
@@ -47,16 +50,23 @@ func (r *Memory) AddUser(name string) error {
 func (r *Memory) AddTrip(userName string, tripName string, locationNames []string) error {
 	user, ok := r.Users[userName]
 	if !ok {
-		fmt.Printf("User %s was not found in memory\n", userName)
+		logger.Log.Debug("User not in memory\n",
+			zap.String("name", userName))
 		return ErrUserNotFound
 	}
 
-	var trip models.Trip
+	trip := models.Trip{
+		Name:      tripName,
+		Locations: make([]*models.Location, 0, len(locationNames)),
+	}
+
 	for _, locationName := range locationNames {
 		location, ok := user.Locations[locationName]
 		if !ok {
-			fmt.Printf("Location %s for the trip %s was not found in memory\n", locationName, tripName)
-			continue
+			logger.Log.Debug("Location not in memory\n",
+				zap.String("location", locationName),
+				zap.String("trip", tripName))
+			return ErrLocationNotFound
 		}
 
 		trip.Locations = append(trip.Locations, &location)
