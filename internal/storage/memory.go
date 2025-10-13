@@ -9,8 +9,8 @@ type Memory struct {
 	Users map[string]*models.User
 }
 
-func New() Memory {
-	return Memory{
+func New() *Memory {
+	return &Memory{
 		Users: map[string]*models.User{},
 	}
 }
