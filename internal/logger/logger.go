@@ -2,12 +2,13 @@ package logger
 
 import "go.uber.org/zap"
 
-var Log *zap.Logger
-
-func Init(devMode bool) {
+func New(name string, devMode bool) *zap.Logger {
+	var log *zap.Logger
 	if devMode {
-		Log, _ = zap.NewDevelopment()
+		log, _ = zap.NewDevelopment()
 	} else {
-		Log, _ = zap.NewProduction()
+		log, _ = zap.NewProduction()
 	}
+
+	return log.Named(name)
 }

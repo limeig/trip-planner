@@ -5,8 +5,8 @@ import (
 )
 
 func main() {
-	logger.Init(true)
-	logger.Log.Info("Trip Planner started")
+	l := logger.New("trip-planner", true)
+	l.Info("started")
 
 	// Create a repository
 	//repository := storage.New()

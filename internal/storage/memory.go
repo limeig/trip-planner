@@ -9,18 +9,23 @@ import (
 
 type Memory struct {
 	Users map[string]*models.User
+	log   *zap.Logger
 }
 
+// New creates a new in-memory storage
 func New() *Memory {
 	return &Memory{
 		Users: map[string]*models.User{},
+		log:   logger.New("memory-storage", false),
 	}
 }
 
+// AddLocation adds a new Location to a User's list Locations
+// Returns an error if the user does not exist
 func (r *Memory) AddLocation(userName string, name string, country string) error {
 	user, ok := r.Users[userName]
 	if !ok {
-		logger.Log.Debug("User not in memory\n",
+		r.log.Debug("User not in memory\n",
 			zap.String("name", userName))
 		return ErrUserNotFound
 	}
@@ -33,6 +38,8 @@ func (r *Memory) AddLocation(userName string, name string, country string) error
 	return nil
 }
 
+// AddUser adds a new User to the memory storage
+// Returns an error if the user already exists
 func (r *Memory) AddUser(name string) error {
 	if _, ok := r.Users[name]; ok {
 		return ErrUserExists
@@ -47,10 +54,12 @@ func (r *Memory) AddUser(name string) error {
 	return nil
 }
 
+// AddTrip adds a new Trip to a User's list of Trips
+// Returns an error if the user does not exist or if any of the locations do not exist
 func (r *Memory) AddTrip(userName string, tripName string, locationNames []string) error {
 	user, ok := r.Users[userName]
 	if !ok {
-		logger.Log.Debug("User not in memory\n",
+		r.log.Debug("User not in memory\n",
 			zap.String("name", userName))
 		return ErrUserNotFound
 	}
@@ -63,7 +72,7 @@ func (r *Memory) AddTrip(userName string, tripName string, locationNames []strin
 	for _, locationName := range locationNames {
 		location, ok := user.Locations[locationName]
 		if !ok {
-			logger.Log.Debug("Location not in memory\n",
+			r.log.Debug("Location not in memory\n",
 				zap.String("location", locationName),
 				zap.String("trip", tripName))
 			return ErrLocationNotFound
@@ -77,6 +86,8 @@ func (r *Memory) AddTrip(userName string, tripName string, locationNames []strin
 	return nil
 }
 
+// GetUser retrieves a User by name
+// Returns an error if the user does not exist
 func (r *Memory) GetUser(userName string) (*models.User, error) {
 	if user, ok := r.Users[userName]; ok {
 		return user, nil
