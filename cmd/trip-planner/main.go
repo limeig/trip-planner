@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	l := logger.New("trip-planner", true)
+	l := logger.New(true)
 	l.Info("started")
 
 	// Create a repository

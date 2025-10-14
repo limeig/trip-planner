@@ -2,7 +2,7 @@ package logger
 
 import "go.uber.org/zap"
 
-func New(name string, devMode bool) *zap.Logger {
+func New(devMode bool) *zap.Logger {
 	var log *zap.Logger
 	if devMode {
 		log, _ = zap.NewDevelopment()
@@ -10,5 +10,5 @@ func New(name string, devMode bool) *zap.Logger {
 		log, _ = zap.NewProduction()
 	}
 
-	return log.Named(name)
+	return log
 }

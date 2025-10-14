@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"trip-planner/internal/logger"
 	"trip-planner/internal/models"
 
 	"go.uber.org/zap"
@@ -13,10 +12,10 @@ type Memory struct {
 }
 
 // New creates a new in-memory storage
-func New() *Memory {
+func New(log *zap.Logger) *Memory {
 	return &Memory{
 		Users: map[string]*models.User{},
-		log:   logger.New("memory-storage", false),
+		log:   log.Named("memory-storage"),
 	}
 }
 
