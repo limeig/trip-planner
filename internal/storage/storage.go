@@ -5,7 +5,7 @@ import (
 )
 
 type Storage interface {
-	AddLocation(string, string) error
+	AddLocation(string, string, string) error
 	AddUser(string) error
 	AddTrip(string, string, []string) error
 
