@@ -7,7 +7,7 @@ import (
 func main() {
 	l := logger.New(true)
 	l.Info("started")
-
+	l.Sync()
 	// Create a repository
 	//repository := storage.New()
 
