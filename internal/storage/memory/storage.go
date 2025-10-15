@@ -1,7 +1,8 @@
-package storage
+package memory
 
 import (
 	"trip-planner/internal/models"
+	"trip-planner/internal/storage/errors"
 
 	"go.uber.org/zap"
 )
@@ -26,7 +27,7 @@ func (r *Memory) AddLocation(userName string, name string, country string) error
 	if !ok {
 		r.log.Debug("User not in memory\n",
 			zap.String("name", userName))
-		return ErrUserNotFound
+		return errors.ErrUserNotFound
 	}
 
 	user.Locations[name] = models.Location{
@@ -41,7 +42,7 @@ func (r *Memory) AddLocation(userName string, name string, country string) error
 // Returns an error if the user already exists
 func (r *Memory) AddUser(name string) error {
 	if _, ok := r.Users[name]; ok {
-		return ErrUserExists
+		return errors.ErrUserExists
 	}
 
 	r.Users[name] = &models.User{
@@ -60,7 +61,7 @@ func (r *Memory) AddTrip(userName string, tripName string, locationNames []strin
 	if !ok {
 		r.log.Debug("User not in memory\n",
 			zap.String("name", userName))
-		return ErrUserNotFound
+		return errors.ErrUserNotFound
 	}
 
 	trip := models.Trip{
@@ -74,7 +75,7 @@ func (r *Memory) AddTrip(userName string, tripName string, locationNames []strin
 			r.log.Debug("Location not in memory\n",
 				zap.String("location", locationName),
 				zap.String("trip", tripName))
-			return ErrLocationNotFound
+			return errors.ErrLocationNotFound
 		}
 
 		trip.Locations = append(trip.Locations, &location)
@@ -92,5 +93,5 @@ func (r *Memory) GetUser(userName string) (*models.User, error) {
 		return user, nil
 	}
 
-	return nil, ErrUserNotFound
+	return nil, errors.ErrUserNotFound
 }

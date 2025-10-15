@@ -3,13 +3,13 @@ package storage
 import (
 	"testing"
 	"trip-planner/internal/logger"
+	"trip-planner/internal/storage/errors"
 )
 
 // TestAddUser tests adding a new user to the memory storage.
 // Positive scenarios
 func TestAddUser(t *testing.T) {
-	log := logger.New(true)
-	repo := New(log)
+	repo := Init(logger.New(true))
 
 	userName := "Alina"
 	err := repo.AddUser(userName)
@@ -29,33 +29,32 @@ func TestAddUser(t *testing.T) {
 
 // Negative scenarios
 func TestAddDuplicateUser(t *testing.T) {
-	log := logger.New(true)
-	repo := New(log)
+	repo := Init(logger.New(true))
+
 	err := repo.AddUser("Bob")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	err = repo.AddUser("Bob")
-	if err != ErrUserExists {
-		t.Fatalf("expected %s, got %v", ErrUserExists, err)
+	if err != errors.ErrUserExists {
+		t.Fatalf("expected %s, got %v", errors.ErrUserExists, err)
 	}
 }
 
 func TestGetNonExistentUser(t *testing.T) {
-	log := logger.New(true)
-	repo := New(log)
+	repo := Init(logger.New(true))
 	_, err := repo.GetUser("Charlie")
-	if err != ErrUserNotFound {
-		t.Fatalf("expected %s, got %v", ErrUserNotFound, err)
+	if err != errors.ErrUserNotFound {
+		t.Fatalf("expected %s, got %v", errors.ErrUserNotFound, err)
 	}
 }
 
 // Test AddLocation
 // Positive scenarios
 func TestAddLocation(t *testing.T) {
-	log := logger.New(true)
-	repo := New(log)
+	repo := Init(logger.New(true))
+
 	userName := "Diana"
 	err := repo.AddUser(userName)
 	if err != nil {
@@ -84,19 +83,19 @@ func TestAddLocation(t *testing.T) {
 
 // Negative scenarios
 func TestAddLocationToNonExistentUser(t *testing.T) {
-	log := logger.New(true)
-	repo := New(log)
+	repo := Init(logger.New(true))
+
 	err := repo.AddLocation("NonExistentUser", "Paris", "France")
-	if err != ErrUserNotFound {
-		t.Fatalf("expected %s, got %v", ErrUserNotFound, err)
+	if err != errors.ErrUserNotFound {
+		t.Fatalf("expected %s, got %v", errors.ErrUserNotFound, err)
 	}
 }
 
 // Test AddTrip
 // Positive scenarios
 func TestAddTrip(t *testing.T) {
-	log := logger.New(true)
-	repo := New(log)
+	repo := Init(logger.New(true))
+
 	userName := "Diana"
 	err := repo.AddUser(userName)
 	if err != nil {
@@ -142,17 +141,17 @@ func TestAddTrip(t *testing.T) {
 
 // Negative scenarios
 func TestAddTripToNonExistentUser(t *testing.T) {
-	log := logger.New(true)
-	repo := New(log)
+	repo := Init(logger.New(true))
+
 	err := repo.AddTrip("NonExistentUser", "Europe Trip", []string{"Paris", "Berlin"})
-	if err != ErrUserNotFound {
-		t.Fatalf("expected %s, got %v", ErrUserNotFound, err)
+	if err != errors.ErrUserNotFound {
+		t.Fatalf("expected %s, got %v", errors.ErrUserNotFound, err)
 	}
 }
 
 func TestAddTripWithNonExistentLocation(t *testing.T) {
-	log := logger.New(true)
-	repo := New(log)
+	repo := Init(logger.New(true))
+
 	userName := "Diana"
 	err := repo.AddUser(userName)
 	if err != nil {
@@ -166,8 +165,8 @@ func TestAddTripWithNonExistentLocation(t *testing.T) {
 
 	err = repo.AddTrip(userName, "UK Trip", []string{"London", "NonExistentCity"})
 
-	if err != ErrLocationNotFound {
-		t.Fatalf("expected %s, got %v", ErrLocationNotFound, err)
+	if err != errors.ErrLocationNotFound {
+		t.Fatalf("expected %s, got %v", errors.ErrLocationNotFound, err)
 	}
 
 	user, err := repo.GetUser(userName)
