@@ -12,7 +12,7 @@ type UserService struct {
 	Logger  *zap.Logger
 }
 
-func New(storage storage.Storage, log zap.Logger) *UserService {
+func New(storage storage.Storage, log *zap.Logger) *UserService {
 	return &UserService{
 		Storage: storage,
 		Logger:  log.Named("user-service"),
